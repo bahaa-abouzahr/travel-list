@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Logo from './Logo.js'
 import Form from './Form.js'
 import PackingList from "./packinglist.js";
@@ -9,16 +9,27 @@ import Stats from './Stats.js'
 //   { id: 2, description: "Socks", quantity: 12, packed: true },
 // ];
 
+// localStorage.setIteam('items', JSON.stringify(items));
+
+
+
 export default function App() {
-  const [items, setItems] = useState([]);
+  const storedItems = JSON.parse(localStorage.getItem('items'))
+
+  const [items, setItems] = useState(storedItems ? storedItems : []);
+  console.log("initial items: ", items);
+
+  useEffect(() => {
+    localStorage.setItem('items', JSON.stringify(items))
+  }, [items])
+  
 
   function handleAddItems(item) {
     setItems(items => [...items, item])
   }
 
   function handleDeleteItem(id) {
-    console.log(id);
-    setItems(items => items.filter(item => item.id !== id))
+     setItems(items => items.filter(item => item.id !== id))
   }
 
   function handleToggleItem(id) {
@@ -27,7 +38,9 @@ export default function App() {
 
   function handleClear() {
     const confirmed = window.confirm('Are you sure you want to delete all items?')
-    if(confirmed) setItems([]);
+    if(confirmed){
+      setItems([]);
+    } 
   }
 
   return(
